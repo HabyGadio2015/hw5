@@ -238,5 +238,9 @@ README should explain the following: copy original DB to the working copy when y
 Delete: Pick a ticket and start the team to watch them work.
 19. Nevermind about that last requst
 20. Replace "Show All" with "Click the Yellow Button Above to See Agents at Work and Status Below"
+21. is the website link in my https://github.com/HabyGadio2015/hw5 link and if so where
+22. and its public yes or no only
+23. Thank you
+24. Make sure that's fixed. Do what's needed. Make the updates on my github so it is all correct for my professor
 
 Feedback from Haby: My Opus 5.5 agent said it cannot guarantee a 100/100. From my experience working with agents, when pitted against each other, they perform even better than expected. For this reason, I am going to create on last agent called "The Professor" who will do the final check of the previous 2 agents. Though Opus has done a great job of catching *many* mistakes of my 1st agent, I still doubt its complete accurateness, so this last check will catch any lingering bugs. 
