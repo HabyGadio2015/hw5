@@ -1,0 +1,63 @@
+{
+  "note": "The vibe coder's root .mcp.json was updated with the campus-customs server in Problem 4, but Claude Code only loads new .mcp.json entries at session startup, so this running session did not yet have the tools available through its own native tool-use interface. These calls were instead made through the real MCP stdio protocol via fastmcp.Client (mcp_server/test_tools.py), spawning mcp_server/server.py exactly as the vibe coder's own MCP client will once a new session picks up the config. Every output below was independently cross-checked against raw sqlite3 queries on data/campus_customs_new.db before being saved here.",
+  "prior_prompts": [
+    {
+      "prompt": "Give me the list of my 3 MCP tools. 1, 2, 3, no editorializing.",
+      "answer": "1. get_ticket(ticket_id)\n2. check_inventory(sku, size)\n3. get_shop_today()"
+    },
+    {
+      "prompt": "Give me a one-liner of what each one does.",
+      "answer": "1. get_ticket(ticket_id) — fetches a ticket from the board by id.\n2. check_inventory(sku, size) — looks up on-hand stock for a SKU + size.\n3. get_shop_today() — returns the shop's current date (desk.date_today)."
+    },
+    {
+      "prompt": "One-liner of how each of these are related or can help.",
+      "answer": "1. get_ticket surfaces which SKU/size/lease/invoice a ticket points to, which check_inventory and get_shop_today then need as inputs.\n2. check_inventory turns a ticket's requested SKU/size/qty into a concrete in-stock-or-not fact.\n3. get_shop_today gives the reference date every overdue/due-soon judgment (on tickets, leases, invoices) is measured against."
+    },
+    {
+      "prompt": "I meant a one-liner of what they can do in combo.",
+      "answer": "Together: get_ticket tells you what a ticket needs, check_inventory confirms whether the shop actually has it, and get_shop_today tells you whether that ticket is already overdue — enough to triage any of the 3 open tickets without guessing."
+    }
+  ],
+  "results": [
+  {
+    "prompt": "With the vibe coder connected, test EACH of my 3 MCP tools. Save the evidence in output/mcp_smoke.json. For every tool include (1) the prompt you asked the vibe coder. Include what I asked. (2) The Tool Name (3) The Tool Output (must match values in data/campus_customs_new.db)",
+    "tool_name": "get_ticket",
+    "tool_output": {
+      "found": true,
+      "id": 101,
+      "type": "customer_order",
+      "requester": "Tauhid Zaman",
+      "subject": "Bulldog tee",
+      "sku": "CC-TEE-WHITE",
+      "size": "S",
+      "qty": 1,
+      "lease_id": null,
+      "invoice_id": 501,
+      "status": "open",
+      "notes": "Needs a tee in size S.",
+      "created_at": "2026-08-31T09:15:00-04:00"
+    }
+  },
+  {
+    "prompt": "With the vibe coder connected, test EACH of my 3 MCP tools. Save the evidence in output/mcp_smoke.json. For every tool include (1) the prompt you asked the vibe coder. Include what I asked. (2) The Tool Name (3) The Tool Output (must match values in data/campus_customs_new.db)",
+    "tool_name": "check_inventory",
+    "tool_output": {
+      "found": true,
+      "sku": "CC-HOOD-NAVY",
+      "name": "Basic Hoodie Big Yale",
+      "size": "M",
+      "qty": 8,
+      "location": "Aisle A"
+    }
+  },
+  {
+    "prompt": "With the vibe coder connected, test EACH of my 3 MCP tools. Save the evidence in output/mcp_smoke.json. For every tool include (1) the prompt you asked the vibe coder. Include what I asked. (2) The Tool Name (3) The Tool Output (must match values in data/campus_customs_new.db)",
+    "tool_name": "get_shop_today",
+    "tool_output": {
+      "found": true,
+      "date_today": "2026-08-31",
+      "notes": null
+    }
+  }
+  ]
+}

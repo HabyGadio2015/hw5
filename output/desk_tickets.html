@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Campus Customs — Desk Tickets</title>
+<style>
+  :root {
+    --yale-blue: #00356b;
+    --yale-blue-light: #286dc0;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --border: #d9e0e8;
+    --text: #1b2430;
+    --muted: #5b6b7c;
+    --warn-bg: #fff4e5;
+    --warn-border: #f0b45a;
+    --ok-bg: #eaf6ec;
+    --ok-border: #5cb86f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: var(--yale-blue);
+    color: white;
+    padding: 20px 28px;
+  }
+  header h1 { margin: 0 0 4px 0; font-size: 22px; }
+  header p { margin: 0; color: #cfe0f5; font-size: 14px; }
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: #0a2a4d;
+    padding: 0 20px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: #cfe0f5;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.08); }
+  .tab-btn.active {
+    color: white;
+    border-bottom: 3px solid #ffcc33;
+    background: rgba(255,255,255,0.06);
+  }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 28px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+  }
+  .card h2 { margin-top: 0; font-size: 18px; color: var(--yale-blue); }
+  .ticket-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px 20px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .ticket-meta div span.label { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .ticket-meta div span.value { font-weight: 600; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 18px 0 8px;
+  }
+  .expected {
+    background: var(--ok-bg);
+    border: 1px solid var(--ok-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .expected ol { margin: 8px 0 0; padding-left: 20px; }
+  .expected li { margin-bottom: 8px; line-height: 1.45; }
+  .expected .verdict { margin-top: 10px; font-weight: 700; }
+  .actual-placeholder {
+    background: #fafbfc;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+  }
+  .actual {
+    background: #eef4fb;
+    border: 1px solid var(--yale-blue-light);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .actual ul { margin: 8px 0 0; padding-left: 20px; }
+  .actual li { margin-bottom: 8px; line-height: 1.45; }
+  .actual .verdict { margin-top: 10px; font-weight: 700; }
+  .actual code { background: #fff; }
+  .cash-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13.5px;
+  }
+  .cash-table th, .cash-table td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cash-table th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .cash-table tr.total td { font-weight: 700; border-top: 2px solid var(--yale-blue); border-bottom: none; }
+  .grader-summary {
+    background: #eef4fb;
+    border: 1px solid var(--yale-blue-light);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .grader-summary .summary-item { margin-bottom: 12px; }
+  .grader-summary .summary-item:last-child { margin-bottom: 0; }
+  .grader-summary strong { color: var(--yale-blue); }
+  .grader-summary p, .grader-summary ul { margin: 6px 0 0; }
+  .grader-summary ul { padding-left: 20px; }
+  .grader-summary li { margin-bottom: 4px; line-height: 1.4; }
+  .coming-later {
+    background: #fafbfc;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    color: var(--muted);
+    text-align: center;
+    font-size: 15px;
+  }
+  code { background: #eef2f7; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Campus Customs — Desk Tickets</h1>
+  <p>Problem 6: what the team is expected to do on each open ticket, before the backend is wired up and the agents actually run.</p>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="t101">Ticket 101</button>
+  <button class="tab-btn" data-tab="t102">Ticket 102</button>
+  <button class="tab-btn" data-tab="t103">Ticket 103</button>
+  <button class="tab-btn" data-tab="cash">Cash</button>
+  <button class="tab-btn" data-tab="reflection">Reflection</button>
+</div>
+
+<main>
+
+  <!-- TICKET 101 -->
+  <div class="panel active" id="t101">
+    <div class="card">
+      <h2>Ticket 101 — customer_order</h2>
+      <div class="ticket-meta">
+        <div><span class="label">Requester</span><span class="value">Tauhid Zaman</span></div>
+        <div><span class="label">Subject</span><span class="value">Bulldog tee</span></div>
+        <div><span class="label">SKU / Size / Qty</span><span class="value">CC-TEE-WHITE / S / 1</span></div>
+        <div><span class="label">Linked invoice</span><span class="value">501</span></div>
+        <div><span class="label">Status</span><span class="value">open</span></div>
+      </div>
+
+      <div class="section-label">Expected</div>
+      <div class="grader-summary">
+        <div class="summary-item">
+          <strong>(1) Who the Boss Should Call First</strong>
+          <p>The BOSS should call INVENTORY first. This allows the BOSS to have a full scope of what products are available. It also gives the BOSS a full scope of the product specifications (SKU, SIZE and QUANTITY).</p>
+        </div>
+        <div class="summary-item">
+          <strong>(2) Agent Delegations</strong>
+          <ul>
+            <li>101: BOSS → INVENTORY → ACCOUNTING</li>
+            <li>102: BOSS → FACILITIES → ACCOUNTING.</li>
+            <li>103: BOSS → INVENTORY → ACCOUNTING → CUSTOMER SERVICE</li>
+          </ul>
+        </div>
+        <div class="summary-item">
+          <strong>(3) MCP Tools To Run</strong>
+          <ul>
+            <li><code>get_ticket</code> — all 3</li>
+            <li><code>check_inventory</code> — 101, 103</li>
+            <li><code>list_vendors</code> + <code>check_vendor_invoice_status</code> — 101, 103 (same vendor, Bulldog Print Co)</li>
+            <li><code>get_invoice</code> — 101</li>
+            <li><code>get_cash_balance</code> — 101, 102</li>
+            <li><code>get_pricing</code> — 103</li>
+            <li><code>get_lease</code> + <code>get_shop_today</code> — 102</li>
+            <li><code>save_draft</code> — 101, 103 (customer-facing drafts)</li>
+            <li><code>record_payment</code> — not expected to actually fire on any ticket yet, since no human approval has been given — ACCOUNTING should only recommend</li>
+            <li><code>update_ticket_status</code> — not expected yet either, since nothing should close out as resolved</li>
+          </ul>
+        </div>
+      </div>
+      <div class="expected">
+        <ol>
+          <li><strong>BOSS</strong> reads the ticket (<code>get_ticket(101)</code>), sees it's a customer order with a SKU/size and a linked invoice, and delegates to <strong>INVENTORY</strong> for the stock check and flags <code>invoice_id=501</code> for <strong>ACCOUNTING</strong>.</li>
+          <li><strong>INVENTORY</strong> calls <code>check_inventory("CC-TEE-WHITE","S")</code> → expect <strong>qty 0</strong> (out of stock). INVENTORY then calls <code>list_vendors()</code>, matches the apparel specialty to Bulldog Print Co, and calls <code>check_vendor_invoice_status(1)</code> → expect <strong>can_ship: false</strong> (invoice 501 is still open).</li>
+          <li><strong>INVENTORY</strong> delegates to <strong>ACCOUNTING</strong>: restocking this item is blocked until invoice 501 is paid.</li>
+          <li><strong>ACCOUNTING</strong> calls <code>get_invoice(501)</code> (expect $840, due 2026-08-28, already overdue) and <code>get_cash_balance()</code> (expect $3,400 — affordable). ACCOUNTING recommends paying it, sets <code>needs_human_approval=true</code>, and does <em>not</em> call <code>record_payment</code> itself (no <code>approved_by</code> in hand).</li>
+          <li><strong>CUSTOMER SERVICE</strong> may be asked to draft an apology/delay message to Tauhid via <code>save_draft</code> — draft only, never sent.</li>
+          <li><strong>BOSS</strong> makes the final call: nothing can ship until the invoice is paid, so the ticket cannot be closed yet.</li>
+        </ol>
+        <div class="verdict">Expected verdict: <u>Not Resolved</u> — Partial Fulfillment: "Blocked on invoice 501 ($840, Bulldog Print Co) needing human-approved payment before a 5-day restock of CC-TEE-WHITE size S can begin."</div>
+      </div>
+
+      <div class="section-label">Actual (Problem 9 live run)</div>
+      <div class="actual">
+        <ul>
+          <li><strong>Run 1</strong> (before invoice 501 was paid) — BOSS delegated to <strong>INVENTORY</strong>, <strong>ACCOUNTING</strong>, and <strong>CUSTOMER SERVICE</strong>. INVENTORY called <code>get_ticket</code>, <code>check_inventory</code>, <code>list_vendors</code>, delegated to ACCOUNTING (which called <code>check_vendor_invoice_status</code> → <code>can_ship: false</code>), then called <code>get_invoice</code>. ACCOUNTING (also reached directly by BOSS) called <code>get_ticket</code>, <code>get_invoice</code>, <code>get_shop_today</code>, <code>get_pricing</code>, <code>check_inventory</code>, <code>get_cash_balance</code>, and produced the <code>payment_proposal</code> (invoice 501, $840). CUSTOMER SERVICE called <code>save_draft</code> on the ticket. Real output: "Inventory reports zero on hand; Bulldog Print Co... cannot ship while invoice #501 is open... recommends it for human-approved payment." ACCOUNTING also flagged on its own that the $840 invoice doesn't specify how many shirts it covers — a caution I hadn't predicted.</li>
+          <li>I presented the $840 proposal in chat; <strong>Haby approved it</strong> (<code>approved_by: "Haby"</code>) via <code>POST /payments/approve</code>. Balance dropped $3,400 → $2,560, invoice 501 marked <code>paid</code>.</li>
+          <li><strong>Run 2</strong> (after payment) — BOSS delegated directly to INVENTORY and CUSTOMER SERVICE only. INVENTORY (<code>get_ticket</code>, <code>check_inventory</code>, <code>list_vendors</code>) delegated once more to ACCOUNTING, whose <code>check_vendor_invoice_status</code> now returned <strong>no open invoice / can ship</strong> (5-day lead time). CUSTOMER SERVICE independently ran <code>get_ticket</code>, <code>check_inventory</code>, <code>list_vendors</code>, <code>check_vendor_invoice_status</code>, then <code>save_draft</code>. Everyone agreed <strong>no restock order or shipment is confirmed</strong> — this system has no tool to place or receive a restock. No payment was proposed this time.</li>
+        </ul>
+        <div class="verdict">Actual verdict: <u>Not Resolved</u> — matches ticket DB status (<code>open</code>, no mismatch). Partial Fulfillment: "The requested tee is still unavailable and the order remains unfulfilled; a restock must be arranged and received before fulfillment."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET 102 -->
+  <div class="panel" id="t102">
+    <div class="card">
+      <h2>Ticket 102 — rent_notice</h2>
+      <div class="ticket-meta">
+        <div><span class="label">Requester</span><span class="value">Elm City Properties</span></div>
+        <div><span class="label">Subject</span><span class="value">Rent due</span></div>
+        <div><span class="label">Linked lease</span><span class="value">1 (Chapel Street shop)</span></div>
+        <div><span class="label">Status</span><span class="value">open</span></div>
+      </div>
+
+      <div class="section-label">Expected</div>
+      <div class="grader-summary">
+        <div class="summary-item">
+          <strong>(1) Who the Boss Should Call First</strong>
+          <p>The BOSS should call INVENTORY first. This allows the BOSS to have a full scope of what products are available. It also gives the BOSS a full scope of the product specifications (SKU, SIZE and QUANTITY).</p>
+        </div>
+        <div class="summary-item">
+          <strong>(2) Agent Delegations</strong>
+          <ul>
+            <li>101: BOSS → INVENTORY → ACCOUNTING</li>
+            <li>102: BOSS → FACILITIES → ACCOUNTING.</li>
+            <li>103: BOSS → INVENTORY → ACCOUNTING → CUSTOMER SERVICE</li>
+          </ul>
+        </div>
+        <div class="summary-item">
+          <strong>(3) MCP Tools To Run</strong>
+          <ul>
+            <li><code>get_ticket</code> — all 3</li>
+            <li><code>check_inventory</code> — 101, 103</li>
+            <li><code>list_vendors</code> + <code>check_vendor_invoice_status</code> — 101, 103 (same vendor, Bulldog Print Co)</li>
+            <li><code>get_invoice</code> — 101</li>
+            <li><code>get_cash_balance</code> — 101, 102</li>
+            <li><code>get_pricing</code> — 103</li>
+            <li><code>get_lease</code> + <code>get_shop_today</code> — 102</li>
+            <li><code>save_draft</code> — 101, 103 (customer-facing drafts)</li>
+            <li><code>record_payment</code> — not expected to actually fire on any ticket yet, since no human approval has been given — ACCOUNTING should only recommend</li>
+            <li><code>update_ticket_status</code> — not expected yet either, since nothing should close out as resolved</li>
+          </ul>
+        </div>
+      </div>
+      <div class="expected">
+        <ol>
+          <li><strong>BOSS</strong> reads the ticket (<code>get_ticket(102)</code>), sees <code>lease_id=1</code> and no SKU, and delegates to <strong>FACILITIES</strong>.</li>
+          <li><strong>FACILITIES</strong> calls <code>get_lease(1)</code> (expect monthly_rent $2,400, next_due 2026-09-02) and <code>get_shop_today()</code> (expect 2026-08-31) → rent is due in <strong>2 days</strong>, matching the ticket's own note.</li>
+          <li><strong>FACILITIES</strong> delegates to <strong>ACCOUNTING</strong> to check affordability and prepare the payment.</li>
+          <li><strong>ACCOUNTING</strong> calls <code>get_cash_balance()</code> (expect $3,400 — affordable on its own) and recommends paying the $2,400 rent, setting <code>needs_human_approval=true</code>. It does not call <code>record_payment</code> without approval.</li>
+          <li>Cross-ticket cash note: if invoice 501 ($840, ticket 101) and this rent ($2,400) are <em>both</em> approved and paid in the same pass, that's $3,240 out of $3,400 — leaves only $160. ACCOUNTING/BOSS should flag this sequencing risk rather than approve both silently.</li>
+        </ol>
+        <div class="verdict">Expected verdict: <u>Not Resolved</u> — Partial Fulfillment: "Rent payment of $2,400 recommended and affordable, but awaiting human approval before <code>record_payment</code> can execute."</div>
+      </div>
+
+      <div class="section-label">Actual (Problem 9 live run)</div>
+      <div class="actual">
+        <ul>
+          <li><strong>Run 1</strong> — this did not match the Expected plan: BOSS, FACILITIES, and ACCOUNTING all confirmed the rent ($2,400, due 2026-09-02, not yet overdue, affordable against $2,560) — but <strong>no payment was proposed at all</strong>. ACCOUNTING: "the records do not establish whether the rent has already been paid, creating duplicate-payment risk." There was also real back-and-forth: BOSS delegated to ACCOUNTING, which delegated back to BOSS, which then tried FACILITIES, which delegated to ACCOUNTING again — several hops that didn't add new information, ending with BOSS calling <code>update_ticket_status(102, "partial", ...)</code>. Tools used across the chain: <code>get_ticket</code>, <code>get_lease</code>, <code>get_shop_today</code>, <code>get_cash_balance</code>, <code>delegate</code> (repeatedly), <code>update_ticket_status</code>.</li>
+          <li>This surfaced a real tool gap: there was no way for ACCOUNTING to check whether rent had already been paid. With Haby's explicit go-ahead, I added a 14th MCP tool, <code>check_payment_history(kind, ref_id)</code> — a read-only query over the real <code>payments</code> table, same pattern already used inside <code>record_payment</code>'s own duplicate check (see <code>mcp_server/server.py</code> and <code>output/harness.md</code> section 4).</li>
+          <li><strong>Run 2</strong> (with the new tool available) — ACCOUNTING still did <em>not</em> call <code>check_payment_history</code>, even though it existed and the prompt was updated to tell it to. BOSS delegated to FACILITIES (which delegated on to ACCOUNTING) and directly to ACCOUNTING — 3 sub-runs, all reaching the same "cannot be determined" conclusion. This time it was ACCOUNTING (not BOSS) that called <code>update_ticket_status</code>, rewriting the notes but leaving the status <code>partial</code>. Per Haby's explicit instruction, I did not re-prompt further to force the tool's use — that would be steering the outcome, not reporting it.</li>
+        </ul>
+        <div class="verdict">Actual verdict: <u>Not Resolved</u> — matches ticket DB status (<code>partial</code> — still unresolved, no mismatch with BOSS's own <code>resolved: false</code>). No cash moved on this ticket. Real, documented limitation: the agent team had the tool to resolve this and didn't reliably use it — see Reflection tab.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET 103 -->
+  <div class="panel" id="t103">
+    <div class="card">
+      <h2>Ticket 103 — price_override</h2>
+      <div class="ticket-meta">
+        <div><span class="label">Requester</span><span class="value">Yale AI Club</span></div>
+        <div><span class="label">Subject</span><span class="value">Bulk hoodie discount</span></div>
+        <div><span class="label">SKU / Size / Qty</span><span class="value">CC-HOOD-NAVY / M / 20</span></div>
+        <div><span class="label">Status</span><span class="value">open</span></div>
+      </div>
+
+      <div class="section-label">Expected</div>
+      <div class="grader-summary">
+        <div class="summary-item">
+          <strong>(1) Who the Boss Should Call First</strong>
+          <p>The BOSS should call INVENTORY first. This allows the BOSS to have a full scope of what products are available. It also gives the BOSS a full scope of the product specifications (SKU, SIZE and QUANTITY).</p>
+        </div>
+        <div class="summary-item">
+          <strong>(2) Agent Delegations</strong>
+          <ul>
+            <li>101: BOSS → INVENTORY → ACCOUNTING</li>
+            <li>102: BOSS → FACILITIES → ACCOUNTING.</li>
+            <li>103: BOSS → INVENTORY → ACCOUNTING → CUSTOMER SERVICE</li>
+          </ul>
+        </div>
+        <div class="summary-item">
+          <strong>(3) MCP Tools To Run</strong>
+          <ul>
+            <li><code>get_ticket</code> — all 3</li>
+            <li><code>check_inventory</code> — 101, 103</li>
+            <li><code>list_vendors</code> + <code>check_vendor_invoice_status</code> — 101, 103 (same vendor, Bulldog Print Co)</li>
+            <li><code>get_invoice</code> — 101</li>
+            <li><code>get_cash_balance</code> — 101, 102</li>
+            <li><code>get_pricing</code> — 103</li>
+            <li><code>get_lease</code> + <code>get_shop_today</code> — 102</li>
+            <li><code>save_draft</code> — 101, 103 (customer-facing drafts)</li>
+            <li><code>record_payment</code> — not expected to actually fire on any ticket yet, since no human approval has been given — ACCOUNTING should only recommend</li>
+            <li><code>update_ticket_status</code> — not expected yet either, since nothing should close out as resolved</li>
+          </ul>
+        </div>
+      </div>
+      <div class="expected">
+        <ol>
+          <li><strong>BOSS</strong> reads the ticket (<code>get_ticket(103)</code>) and delegates to both <strong>INVENTORY</strong> (can we even fill 20?) and <strong>ACCOUNTING</strong> (is a discount affordable?).</li>
+          <li><strong>INVENTORY</strong> calls <code>check_inventory("CC-HOOD-NAVY","M")</code> → expect <strong>qty 8</strong>, a <strong>12-unit shortfall</strong> against the requested 20. INVENTORY checks the same Bulldog Print Co restock path as ticket 101 — expect it's <strong>also blocked</strong> by invoice 501.</li>
+          <li><strong>ACCOUNTING</strong> calls <code>get_pricing("CC-HOOD-NAVY")</code> → expect unit_cost $22, list_price $58 (~62% margin). Per Shop Rule 1, any discount ACCOUNTING approves must stay above $22/unit — it should propose a specific floor, not just "give a discount."</li>
+          <li><strong>CUSTOMER SERVICE</strong> drafts (via <code>save_draft</code>) a message to Yale AI Club explaining that only 8 of 20 can ship now, with the rest pending restock — draft only, never sent.</li>
+          <li><strong>BOSS</strong> makes the final call: this ticket is only partially fulfillable right now, on two independent blockers (stock shortfall + the same unpaid-invoice vendor block as ticket 101, plus no discount price approved yet).</li>
+        </ol>
+        <div class="verdict">Expected verdict: <u>Not Resolved</u> — Partial Fulfillment: "Only 8 of 20 in stock; remaining 12 blocked on the same invoice-501 vendor restock as ticket 101. No discount price has been approved yet (must stay above $22/unit cost)."</div>
+      </div>
+
+      <div class="section-label">Actual (Problem 9 live run)</div>
+      <div class="actual">
+        <ul>
+          <li>Run after invoice 501 was already paid (ticket 101's flow unblocked Bulldog Print Co for this ticket too). BOSS delegated to <strong>ACCOUNTING</strong>, <strong>INVENTORY</strong>, and <strong>CUSTOMER SERVICE</strong>. ACCOUNTING (asked directly by BOSS) called <code>get_pricing</code> ($22 unit cost / $58 list). INVENTORY called <code>get_ticket</code>, <code>check_inventory</code>, <code>list_vendors</code>, then delegated to ACCOUNTING, whose <code>check_vendor_invoice_status</code> confirmed the vendor now has no open invoice. CUSTOMER SERVICE called <code>get_ticket</code>, <code>check_inventory</code>, <code>get_pricing</code>, <code>list_vendors</code>, then <code>save_draft</code>. BOSS finished with <code>update_ticket_status(103, "partial", ...)</code>.</li>
+          <li>This matched the Expected shortfall math exactly: <strong>8 of 20</strong> in stock, 12-unit shortfall, vendor has a 5-day lead time and (now) <strong>no open invoice</strong> — but no restock has actually been ordered (same "no place-order tool" limitation as ticket 101).</li>
+          <li>As Expected, ACCOUNTING set the discount floor: break-even $22 per hoodie, $1,160 at list price with $720 gross profit, so any discount must stay above $22. One real difference from the plan: no agent proposed an actual discounted price. Instead, <strong>CUSTOMER SERVICE drafted a message asking Yale AI Club for their target unit price</strong>, with the above-$22 condition included. That is more cautious than predicted. The draft promised no discount or restock and was never sent.</li>
+        </ul>
+        <div class="verdict">Actual verdict: <u>Not Resolved</u> — matches ticket DB status (<code>partial</code> — still unresolved, no mismatch). No cash moved on this ticket (a discount isn't a payment in this system). Partial Fulfillment: "Await the club's target per-unit price before deciding a discount; 12 hoodies also remain unstocked and no restock order has been placed."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASH -->
+  <div class="panel" id="cash">
+    <div class="card">
+      <h2>Cash — Problem 9 Itemized</h2>
+      <table class="cash-table">
+        <tr><th>Item</th><th>Change</th><th>Balance</th></tr>
+        <tr><td><strong>(1) Starting checking balance</strong> — after <code>POST /reset</code>, before any ticket ran</td><td>—</td><td>$3,400.00</td></tr>
+        <tr><td><strong>Ticket 101:</strong> invoice #501 paid to Bulldog Print Co ("Rush reprint CC-TEE-WHITE S"), approved by Haby via <code>POST /payments/approve</code></td><td>−$840.00</td><td>$2,560.00</td></tr>
+        <tr><td><strong>Ticket 102:</strong> no payment made — rent payment status could not be verified as unpaid (duplicate-payment risk), so ACCOUNTING correctly withheld any proposal</td><td>$0.00</td><td>$2,560.00</td></tr>
+        <tr><td><strong>Ticket 103:</strong> no payment made — a discount is a pricing decision, not a cash outflow; no purchase order exists in this system</td><td>$0.00</td><td>$2,560.00</td></tr>
+        <tr class="total"><td><strong>(3) Ending checking balance</strong></td><td>−$840.00 total</td><td>$2,560.00</td></tr>
+      </table>
+      <p style="margin-top:14px;font-size:13px;color:var(--muted)">
+        Verified against the working database directly: <code>sqlite3 data/campus_customs_new.db "SELECT balance FROM cash_accounts;"</code> → <code>2560.0</code>, and <code>GET /cash</code> → <code>{"account":"checking","balance":2560.0,"date":"2026-08-31"}</code>. $3,400.00 − $840.00 = $2,560.00. Only one <code>payments</code> row exists (id 1, invoice #501, $840, approved_by "Haby").
+      </p>
+    </div>
+  </div>
+
+  <!-- REFLECTION -->
+  <div class="panel" id="reflection">
+    <div class="card">
+      <h2>Reflection — Problem 10</h2>
+      <p style="font-size:13px;color:var(--muted)">Every claim below is taken from this page's ticket tabs, the Cash tab, and <code>output/audit_trail.json</code>, which has 29 real entries from the live runs.</p>
+
+      <h3>(1) How did the agents perform on each ticket, and why?</h3>
+      <ul>
+        <li><strong>Ticket 101: strong.</strong> Every fact matched the database. CC-TEE-WHITE size S was 0 in stock. Bulldog Print Co was blocked by invoice #501 (<code>can_ship: false</code>). The $840 invoice was overdue against shop date 2026-08-31 and affordable against $3,400. ACCOUNTING produced a correct <code>payment_proposal</code> and also raised a caution nobody had asked for: the invoice does not say how many shirts the $840 covers. After Haby approved the payment (Cash tab: $3,400 → $2,560), BOSS still reported <u>Not Resolved</u>. That was honest: the vendor was unblocked, but this system has no tool to order or receive a restock. The weak spot was redundancy. In run 1, ACCOUNTING was started twice, once directly by BOSS and once through INVENTORY. In run 2, CUSTOMER SERVICE repeated the vendor check that ACCOUNTING had just done.</li>
+        <li><strong>Ticket 102: weakest.</strong> The facts were right: $2,400 rent due 2026-09-02, not overdue, and the agents worked out themselves that paying it would leave $160 of the $2,560. Refusing to propose a payment while unsure about a duplicate does honor Shop Rule 2. But run 1 took <strong>11 logged agent runs</strong>, with BOSS called back in by its own delegates. <code>get_ticket</code> ran in all 11, and <code>get_lease</code> and <code>get_shop_today</code> ran in 10. No hop added new information. In run 2, ACCOUNTING never called <code>check_payment_history</code>, even though the tool had been added for exactly this blocker and its prompt told it to use it. The tool would have answered "no payment recorded." The right move was to propose the $2,400 with that caveat and let the human decide. Two runs ended with no progress and no cash moved.</li>
+        <li><strong>Ticket 103: good.</strong> The shortfall math was correct (8 of 20, short 12) and so was the pricing ($22 cost, $58 list). The team also saw that the vendor was <em>no longer</em> blocked, which fits ticket 101's payment earlier in the same session. ACCOUNTING set the Shop Rule 1 floor with the math: break-even is $22 per hoodie, and at list price the 20 hoodies total $1,160 with $720 gross profit, so any discount must keep the price above $22. BOSS's summary and CUSTOMER SERVICE's draft both repeat that condition. The team did not invent a discount number. CUSTOMER SERVICE drafted a message asking Yale AI Club for their target price. The ticket stayed <u>Not Resolved</u> because the shortfall remains and the customer has not answered.</li>
+      </ul>
+
+      <h3>(2) How did Actual compare to the Expected plan?</h3>
+      <ul>
+        <li><strong>101: close match.</strong> The predicted chain BOSS → INVENTORY → ACCOUNTING (plus CUSTOMER SERVICE) happened. BOSS also went to ACCOUNTING directly. Every tool in the plan ran (<code>get_ticket</code>, <code>check_inventory</code>, <code>list_vendors</code>, <code>check_vendor_invoice_status</code>, <code>get_invoice</code>, <code>get_cash_balance</code>, <code>save_draft</code>). ACCOUNTING also ran <code>get_pricing</code> and <code>get_shop_today</code>, which the plan did not predict. One prediction was wrong: the plan had INVENTORY calling <code>check_vendor_invoice_status</code>, but INVENTORY handed that check to ACCOUNTING. As planned, no agent ever executed <code>record_payment</code>. The only payment came through the human-approval route. The verdict matched: Not Resolved.</li>
+        <li><strong>102: biggest gap.</strong> The plan expected a clean BOSS → FACILITIES → ACCOUNTING chain ending in a $2,400 proposal waiting for approval. Instead, the agents looped (BOSS ↔ ACCOUNTING ↔ FACILITIES) and proposed nothing. The plan's cross-ticket cash warning was right: paying both bills leaves only $160, and the agents computed $160 themselves. The plan's rule "BOSS calls INVENTORY first" turned out not to be universal. On this rent ticket BOSS skipped INVENTORY entirely, which was correct because the ticket has no SKU.</li>
+        <li><strong>103: matched on facts, differed on approach.</strong> The plan's chain BOSS → INVENTORY → ACCOUNTING → CUSTOMER SERVICE happened, along with 8 of 20 in stock and the $22 / $58 prices. Two predictions were wrong. (a) The plan expected the restock to be blocked by invoice #501, but ticket 101's approved payment had already unblocked the vendor. Running the tickets in order created a dependency the plan missed. (b) As the plan expected, ACCOUNTING did set a specific floor ($22, with the $1,160 / $720 math). What the plan missed is the next step: no agent proposed an actual discounted price. CUSTOMER SERVICE asked the customer for their target price instead. The plan also said <code>update_ticket_status</code> would not fire. BOSS did use it, on 102 and 103, but only to set <code>partial</code>, never <code>resolved</code>, so Shop Rule 7 held.</li>
+      </ul>
+
+      <h3>(3) What would have been simpler as one agent with tools, and why?</h3>
+      <p>All three tickets. Each was a short, straight line through a tiny database (9 tables, 3 tickets), and none needed specialists working in parallel. With 5 agents, every hop restarted from nothing and fetched the same facts again. Ticket 102 shows this most clearly: 11 agent runs, <code>get_ticket</code> 11 times, <code>get_lease</code> 10 times. On ticket 101, <code>check_inventory</code> ran 3 times in run 1 alone (INVENTORY, ACCOUNTING, CUSTOMER SERVICE). One agent with the same 13 tools would fetch each fact once, reason over all of it together, and use a fraction of the requests. The 12-request test in Problem 5 ran out mid-delegation, and the real runs needed the 40-request budget. Delegation also caused 102's failure: each hop handed the question "is rent already paid?" to the next agent instead of answering it with the tool. The split did buy two things. Each prompt stays focused (ACCOUNTING's money rules live in one place), and the audit trail shows which "department" said what. But the safety guarantees that matter are enforced in code, not by having 5 agents: <code>record_payment</code> refuses without <code>approved_by</code>, refuses a negative balance, and refuses a duplicate, and it is filtered out of every agent's toolset. One agent working under those same tools would be exactly as safe.</p>
+
+      <h3>(4) Three new Campus Customs problems this team <em>could</em> solve with the tools built</h3>
+      <ul>
+        <li><strong>A mug restock.</strong> CC-MUG-CREST is 0 in stock today (OS size). This is the same pattern as ticket 101: <code>check_inventory</code> → <code>list_vendors</code> (Elm City Gifts, "mugs and small goods", 3-day lead time) → <code>check_vendor_invoice_status</code> → <code>get_invoice</code> / <code>get_cash_balance</code> → <code>payment_proposal</code> → Haby approves through <code>POST /payments/approve</code>. With checking at $2,560 (Cash tab), any bill above that would be refused by <code>record_payment</code> rather than overdraw the account.</li>
+        <li><strong>A cap order that can fully resolve today.</strong> CC-HAT-BLUE has 40 in stock, cost $6, list $22. An order for, say, 10 caps with a discount request needs no restock and no payment. <code>check_inventory</code> confirms 40 ≥ 10. <code>get_pricing</code> gives the $6 floor for Shop Rule 1. CUSTOMER SERVICE drafts the reply, and BOSS can truthfully set <code>update_ticket_status(..., "resolved")</code>. Unlike 101 and 103, nothing here is blocked by stock.</li>
+        <li><strong>A duplicate-bill attempt.</strong> If a new ticket claimed invoice #501 was still owed, <code>check_payment_history("invoice", 501)</code> would return the real row: $840, paid 2026-08-31, approved by Haby. If anyone still tried to pay it, <code>record_payment</code> would refuse it as a duplicate. Both behaviors were tested in Problems 7 and 9.</li>
+      </ul>
+
+      <h3>(5) Three new problems this team <em>could not</em> solve, and what it would need</h3>
+      <ul>
+        <li><strong>Actually restocking, which is why 101 and 103 are stuck.</strong> No tool places or receives an order, and shop time never moves forward, so the 5-day lead time can never pass. Needed: a <code>purchase_orders</code> table, plus <code>create_purchase_order(vendor_id, sku, size, qty)</code> (human-approved, like payments; ticket 103's 12 hoodies at $22 cost = $264), <code>receive_shipment(po_id)</code> to add to <code>inventory.qty</code>, and <code>advance_shop_date(days)</code> on <code>desk</code>. Owners: INVENTORY, or a new PURCHASING agent, with ACCOUNTING approving the cost.</li>
+        <li><strong>Monthly rent, a real flaw in what was built.</strong> <code>record_payment</code> and <code>check_payment_history</code> detect duplicates by <code>(kind, ref_id)</code>. Once rent for lease 1 is paid one time, every later month's rent for lease 1 would be refused as a duplicate. Paying rent also never moves <code>leases.next_due</code> forward. Needed: a billing-period field (or a <code>rent_bills</code> table with one row per month), duplicate checks keyed on that period, and a FACILITIES tool that sets the next due date after payment.</li>
+        <li><strong>Closing a sale.</strong> Revenue is not modeled, and cash only goes out (Cash tab: the only movement is −$840). So even if Yale AI Club agrees to a price on ticket 103, nothing can record the sale, take hoodies out of stock, or add cash, and no draft can actually be sent. Needed: <code>record_sale(ticket_id, sku, size, qty, unit_price)</code>, which takes the units out of inventory, adds cash, and refuses any price at or below <code>unit_cost</code> (Shop Rule 1 in code); a revenue entry in the cash ledger; and a human-approved <code>send_message(ticket_id)</code>, a step that is deliberately missing today under Shop Rule 5. A SALES agent, or an expanded CUSTOMER SERVICE, would own it.</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  document.getElementById('tabs').addEventListener('click', function (e) {
+    var btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+</script>
+
+</body>
+</html>
