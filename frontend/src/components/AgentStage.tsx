@@ -47,9 +47,11 @@ export default function AgentStage({ events, running, activeAgent }: Props) {
 
       {filter && (
         <div className="feed-filter">
-          Showing only <strong>{AGENT_META[filter].label}</strong>
+          <span className="feed-filter-label">
+            Showing only <strong>{AGENT_META[filter].label}</strong>
+          </span>
           <button type="button" className="feed-filter-clear" onClick={() => setFilter(null)}>
-            Show all
+            Click the Yellow Button Above to See Agents at Work and Status Below
           </button>
         </div>
       )}

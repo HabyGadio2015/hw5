@@ -62,7 +62,7 @@ rather than just decorative.
 
 *Note added in Problem 9 (the text above is otherwise unchanged):* the result panel now also has a "What each agent did" list, with each agent's last statement and the tools it used in that run. That covers the "short summary of what each agent did" requirement directly, instead of leaving it to the live feed. Separately, `partial` tickets now count as open (`is_open: true`). Before, they showed as closed even though they were still unresolved.
 
-*Note added after Problem 11 (at Haby's request):* the Team cards are now clickable buttons. Clicking an agent filters the live feed to only that agent's messages, with a "Showing only …" chip. Clicking the card again or "Show all" clears the filter. This makes it easy to follow one teammate through a busy delegation chain, like ticket 102's.
+*Note added after Problem 11 (at Haby's request):* the Team cards are now clickable buttons. Clicking an agent filters the live feed to only that agent's messages, with a "Showing only …" chip. Clicking the card again, or the button labeled "Click the Yellow Button Above to See Agents at Work and Status Below", clears the filter. This makes it easy to follow one teammate through a busy delegation chain, like ticket 102's.
 
 ## How cash shows up
 

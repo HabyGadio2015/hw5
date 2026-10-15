@@ -234,5 +234,9 @@ README should explain the following: copy original DB to the working copy when y
 15. Is the cards in team supposed to be double clickable?
 16. Did the assignment not ask for clickablity for those
 17. Yes do that please
+18. Replace: Show all with "Hide" 
+Delete: Pick a ticket and start the team to watch them work.
+19. Nevermind about that last requst
+20. Replace "Show All" with "Click the Yellow Button Above to See Agents at Work and Status Below"
 
 Feedback from Haby: My Opus 5.5 agent said it cannot guarantee a 100/100. From my experience working with agents, when pitted against each other, they perform even better than expected. For this reason, I am going to create on last agent called "The Professor" who will do the final check of the previous 2 agents. Though Opus has done a great job of catching *many* mistakes of my 1st agent, I still doubt its complete accurateness, so this last check will catch any lingering bugs. 
