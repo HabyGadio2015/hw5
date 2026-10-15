@@ -278,6 +278,38 @@ h1, h2 { font-family: 'Fraunces', serif; margin: 0; }
 
 .avatar--spoken { opacity: 1; }
 
+button.avatar {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button.avatar:hover { opacity: 1; transform: translateY(-2px); }
+button.avatar:focus-visible { outline: 2px solid var(--agent-color); outline-offset: 2px; }
+
+.avatar--filtered {
+  opacity: 1;
+  border-color: var(--agent-color);
+  background: color-mix(in srgb, var(--agent-glow) 14%, #ffffff);
+}
+
+.feed-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  margin: -8px 0 14px;
+}
+.feed-filter-clear {
+  border: 1px solid var(--border);
+  background: #f1f3f6;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.feed-filter-clear:hover { background: #e7eaf0; }
+
 .avatar--active {
   opacity: 1;
   transform: translateY(-4px) scale(1.04);

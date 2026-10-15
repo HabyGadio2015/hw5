@@ -1,6 +1,6 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { AGENT_META, AGENT_ORDER } from '../agentMeta'
-import type { AgentEvent } from '../types'
+import type { AgentEvent, AgentRole } from '../types'
 
 interface Props {
   events: AgentEvent[]
@@ -9,18 +9,24 @@ interface Props {
 }
 
 export default function AgentStage({ events, running, activeAgent }: Props) {
+  const [filter, setFilter] = useState<AgentRole | null>(null)
+  const shown = filter ? events.filter((e) => e.agent === filter) : events
+
   return (
     <section className="agent-stage">
       <h2 className="panel-title">The Team</h2>
+      <p className="panel-sub">Click an agent to see only its messages.</p>
       <div className="avatar-row">
         {AGENT_ORDER.map((role) => {
           const meta = AGENT_META[role]
           const isActive = running && activeAgent === role
           const hasSpoken = events.some((e) => e.agent === role)
+          const isFiltered = filter === role
           return (
-            <div
+            <button
+              type="button"
               key={role}
-              className={`avatar ${isActive ? 'avatar--active' : ''} ${hasSpoken ? 'avatar--spoken' : ''}`}
+              className={`avatar ${isActive ? 'avatar--active' : ''} ${hasSpoken ? 'avatar--spoken' : ''} ${isFiltered ? 'avatar--filtered' : ''}`}
               style={
                 {
                   '--agent-color': meta.color,
@@ -28,14 +34,25 @@ export default function AgentStage({ events, running, activeAgent }: Props) {
                 } as CSSProperties
               }
               title={meta.blurb}
+              aria-pressed={isFiltered}
+              onClick={() => setFilter(isFiltered ? null : role)}
             >
               <div className="avatar-glyph">{meta.glyph}</div>
               <div className="avatar-label">{meta.label}</div>
               {isActive && <div className="avatar-pulse" />}
-            </div>
+            </button>
           )
         })}
       </div>
+
+      {filter && (
+        <div className="feed-filter">
+          Showing only <strong>{AGENT_META[filter].label}</strong>
+          <button type="button" className="feed-filter-clear" onClick={() => setFilter(null)}>
+            Show all
+          </button>
+        </div>
+      )}
 
       <div className="event-feed">
         {events.length === 0 && !running && (
@@ -48,7 +65,12 @@ export default function AgentStage({ events, running, activeAgent }: Props) {
             <span className="dot-flashing" /> BOSS is reading the ticket…
           </div>
         )}
-        {events.map((e, i) => {
+        {filter && events.length > 0 && shown.length === 0 && (
+          <div className="event-feed-empty">
+            {AGENT_META[filter].label} hasn't said anything on this ticket.
+          </div>
+        )}
+        {shown.map((e, i) => {
           const meta = AGENT_META[e.agent] ?? AGENT_META.boss
           return (
             <div
