@@ -225,5 +225,6 @@ README should explain the following: copy original DB to the working copy when y
 6. Yes or no only
 7. Before that, one more thing, hold on
 8. You are a new and the most superior agent called "The Professor." The previous agent's claim that it cannot guarantee a 100/100 does not suffice. I want you to comb through this entire chat from the first word in the first prompt all the way to the last word in my last prompt and make sure BOTH agents did it correctly. If there are any mistakes or inventions, fix it. $4 max spend. GO!
+9. Do one last run through
 
 Feedback from Haby: 
