@@ -80,7 +80,7 @@ cost), each attached in-process to the `campus-customs` MCP server:
 
 ## Run it
 
-All commands start from the repo root (`hw5/`). You need Python 3.11+ and Node 18+.
+All commands start from the repo root (`hw5/`). You need Python 3.11+ (required by pydantic-ai) and Node 20.19+ or 22.12+ (required by Vite).
 
 **1. Set up once**
 

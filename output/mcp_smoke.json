@@ -1,5 +1,6 @@
 {
   "note": "The vibe coder's root .mcp.json was updated with the campus-customs server in Problem 4, but Claude Code only loads new .mcp.json entries at session startup, so this running session did not yet have the tools available through its own native tool-use interface. These calls were instead made through the real MCP stdio protocol via fastmcp.Client (mcp_server/test_tools.py), spawning mcp_server/server.py exactly as the vibe coder's own MCP client will once a new session picks up the config. Every output below was independently cross-checked against raw sqlite3 queries on data/campus_customs_new.db before being saved here.",
+  "note_added_in_problem_9": "These outputs were captured in Problem 4 and matched data/campus_customs_new.db exactly at that time. Since then, Problem 9's live run has added CUSTOMER SERVICE drafts (via save_draft) to ticket 101's notes in the committed working copy. So get_ticket(101) now returns a longer notes field; every other value below still matches. Running POST /reset (or copying campus_customs.db over the working copy) restores the exact values shown here.",
   "prior_prompts": [
     {
       "prompt": "Give me the list of my 3 MCP tools. 1, 2, 3, no editorializing.",

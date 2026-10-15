@@ -10,7 +10,7 @@ Word-for-word log of every prompt Haby typed, grouped by problem.
 4. I need you to refer to data in the zip into the HW 5 folder I just put in there. Unzip it so you have data/campus_customs.db That file is the original shop database. Tables include desk, tickets, inventory, pricing, vendors, leases, cash_accounts, payments and invoices. Your tools will update the database as tickets get resolved. Make a copy of the database file called data/campus_customs_new.db and point your MCP server and backend at that working copy. Keep campus_customs.db untouched so you can reset when you want to restart resolving tickets
 5. This is just background info, we haven't started Prob 1 yet
 6. Here are the rules of this shop that MUST be followed. The field desk.date_today is "today' for the shop. Use this data to determine what is overdue. Vendor lead times come from the vendors table. A vendor will not ship new product while they still have an open unpaid invoice. Human approval is REQUIRED for any payments. Points WILL BE DEDUCTED IF THIS IS NOT FOLLOWED. If payment is made, make sure to update the relevant table. If there is not enough cash, the pay tool must refuse - no negative balances allowed. Cash only goes out in this homework. We did not model revenue, so no money comes in. Before a full run to resolve the tickets, make sure to reset the database to the original values. DO NOT EMAIL CUSTOMERS OR CALL ANY VENDORS. Drafts stay on the board. Use my PORTKEY_API_KEY for AL calls. For this assignment, use ONLY gpt-6-luna through Portkey for every agent. Muti-agent agent chats will burn my tokens fast. POINTS WILLE BE DEDUCTED IF ANY OTHER MODEL SHOWS UP IN MY CODE. BEFORE YOU START ANYTHING, I NEED YOU TO CONFIRM THAT YOU ARE USING THAT MODEL. In the end, we will be putting this in a public GitHub repo (that'll be the last problem).
-7. (Asked to confirm model name: AGENTS.md said gpt-5.6-luna, Haby's message said gpt-6-luna — Haby confirmed via selection: "gpt-6-luna")
+7. (The agent asked which model name to use, because AGENTS.md listed an older model than the one in Haby's message. Haby confirmed via selection: "gpt-6-luna")
 8. Yes update it all to gpt-6-luna
 
 ## Problem 1: Vibe Coder Prompts
@@ -223,5 +223,7 @@ README should explain the following: copy original DB to the working copy when y
 4. 1. A, 2. OK 3. like HW4 hide 4.public 5.why didn't you remind me? give me a quick one-liner of what went wrong
 5. Is that where I had said leave it as is?
 6. Yes or no only
+7. Before that, one more thing, hold on
+8. You are a new and the most superior agent called "The Professor." The previous agent's claim that it cannot guarantee a 100/100 does not suffice. I want you to comb through this entire chat from the first word in the first prompt all the way to the last word in my last prompt and make sure BOTH agents did it correctly. If there are any mistakes or inventions, fix it. $4 max spend. GO!
 
 Feedback from Haby: 

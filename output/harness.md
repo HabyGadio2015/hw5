@@ -181,6 +181,17 @@ All 14 MCP tools in `mcp_server/server.py` (grown from the original 3 in Problem
 
 ## 5. Safety & Guardrails
 
+**The 8 Shop Rules** (Haby's rules, summarized here; each agent's prompt in `backend/prompts/` lists all 8 under "Shop Rules"):
+
+1. The goal is to make a profit (P = R − C). No sale or discount may leave no profit.
+2. Payments are made once. Check before paying, and flag any double-payment risk.
+3. BOSS always has the final say.
+4. A human (Haby) must approve before anything is paid.
+5. No emails to customers or vendors. Drafts stay on the board.
+6. Open tickets on the board can be anything the shop has to handle (orders, rent, unpaid bills, discount requests).
+7. Never mark a ticket resolved if it's only partially resolved. Say Not Resolved and add a one-line Partial Fulfillment note.
+8. No inventions (dates, amounts, requests, tools). If something isn't found, is wrong, or isn't there, say so.
+
 **Already built in, not just prompted for:**
 
 - **Human approval is enforced in code, not just asked for.** The agents' own MCP toolset has `record_payment` filtered out entirely (`backend/agents.py`, via `AbstractToolset.filtered`) — no agent can call it, no matter what the model decides. Only `backend/main.py`'s `/payments/approve` route (hit after a human clicks approve) talks to the unfiltered server and can call it. `record_payment` also refuses outright if `approved_by` is blank, as a second layer.
@@ -206,12 +217,14 @@ Running at `http://localhost:8000` (`uvicorn main:app --reload --port 8000`, fro
 
 | Route | Does |
 |---|---|
-| `GET /tickets` | Returns the 3 seed tickets (101, 102, 103) with `is_open`, which is true for any status other than `resolved`/`closed`. A `partial` ticket is still open work. (Corrected in Problem 9: it used to be `status == "open"`, which wrongly showed `partial` tickets as closed.) |
+| `GET /tickets` | Returns the 3 seed tickets (101, 102, 103) and whether each is open |
 | `POST /tickets/{ticket_id}/run` | Runs the agent team (starting at BOSS) on that ticket — real `gpt-6-luna` calls, costs tokens |
 | `GET /events?limit=` | Recent audit-trail entries, newest first: agent, what it said, tools used, resolved |
 | `POST /payments/approve` | The only route that moves money — calls `record_payment` after a human approval, used for a prior `payment_proposal` |
 | `GET /cash` | Current `checking` balance from `cash_accounts` |
 | `POST /reset` | Re-copies `campus_customs.db` over `campus_customs_new.db` for a fresh run |
+
+*Note added in Problem 9:* "open" means any status other than `resolved`/`closed`, so a `partial` ticket still counts as open work. The route originally used `status == "open"`, which wrongly showed `partial` tickets as closed.
 
 ## 7. The Five Agents (`backend/agents.py`, `backend/prompts/*.md`)
 

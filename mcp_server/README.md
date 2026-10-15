@@ -69,6 +69,11 @@ Added to the project-root `.mcp.json` (`AI Foundations/.mcp.json`) as
 `server.py`. New `.mcp.json` entries only take effect in Claude Code
 sessions started after the edit.
 
+*Note added in Problem 11:* the GitHub repo also ships its own `.mcp.json`
+at the repo root, with repo-relative paths (`.venv/bin/python`,
+`mcp_server/server.py`), so a grader's vibe coder opened in `hw5/` can
+connect without the AI Foundations folder.
+
 ## Testing
 
 `mcp_server/test_tools.py` connects to the server over the real stdio MCP
