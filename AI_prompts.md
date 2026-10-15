@@ -244,5 +244,6 @@ Delete: Pick a ticket and start the team to watch them work.
 24. Make sure that's fixed. Do what's needed. Make the updates on my github so it is all correct for my professor
 25. Make sure you run 103 yourself, because I don't trust the first agent's work
 26. Ok
+27. Thank you
 
 Feedback from Haby: My Opus 5.5 agent said it cannot guarantee a 100/100. From my experience working with agents, when pitted against each other, they perform even better than expected. For this reason, I am going to create on last agent called "The Professor" who will do the final check of the previous 2 agents. Though Opus has done a great job of catching *many* mistakes of my 1st agent, I still doubt its complete accurateness, so this last check will catch any lingering bugs. 
