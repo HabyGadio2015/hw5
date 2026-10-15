@@ -152,7 +152,7 @@ Feedback from Haby: This was the longest run thus far because the agent had to g
 8. Leave it as-is, move to 103
 9. Wow how many minutes did that take?
 
-Feedback from Haby: 
+Feedback from Haby: The agent was taking too long to process 102. At the 18 minute mark, I told it to leave it as is with the intention of bringing in a stronger model to take it to the finish line.
 
 ## Problem 10: Reflection
 
@@ -221,5 +221,7 @@ README should explain the following: copy original DB to the working copy when y
 2. Sorry I didnt clarify. Problem 10: Reflection. I already gave the prompt, so put all that work and the feedback under that problem (Open output/desk_tickets.html and fill the Reflection tab. Answer these questions and be VERY THOROUGH: (1) How would you evaluate the performance of agents on each ticket and why? (2) For each ticket, how did Actual compare to Expected plan you wrote earlier? (3) What would have been simpler as one agent with tools - and WHY? (4) Describe 3 NEW problems CAMPUS CUSTOMS might face that this agent team could solve with the tools you built (5) Describe 3 NEW problems Campus Customs might face that this agent team could NOT solve with the tools you built and explain the tools and agents you would need to solve them.       For each answer, tie every answer to THIS app and the 3 tickets you ran. Use the ticket tabs and Cash tab on the same page as your evidence. REMEMBER GENERIC ESSAYS WITHOUT CAMPUS CUSTOMS DETAILS WILL SCORE LOW. I WANT A 100/100 this is very important to me, please no mistakes and no inventions)
 3. you didnt follow my layout for the tress
 4. 1. A, 2. OK 3. like HW4 hide 4.public 5.why didn't you remind me? give me a quick one-liner of what went wrong
+5. Is that where I had said leave it as is?
+6. Yes or no only
 
 Feedback from Haby: 
