@@ -226,5 +226,7 @@ README should explain the following: copy original DB to the working copy when y
 7. Before that, one more thing, hold on
 8. You are a new and the most superior agent called "The Professor." The previous agent's claim that it cannot guarantee a 100/100 does not suffice. I want you to comb through this entire chat from the first word in the first prompt all the way to the last word in my last prompt and make sure BOTH agents did it correctly. If there are any mistakes or inventions, fix it. $4 max spend. GO!
 9. Do one last run through
+10. No, Prob 6 heading is - Problem 6: Plan the 3 Tickets
+11. Yes change it. Give me the probs and titles here. only that no editorializing
 
-Feedback from Haby: 
+Feedback from Haby: My Opus 5.5 agent said it cannot guarantee a 100/100. From my experience working with agents, when pitted against each other, they perform even better than expected. For this reason, I am going to create on last agent called "The Professor" who will do the final check of the previous 2 agents. Though Opus has done a great job of catching *many* mistakes of my 1st agent, I still doubt its complete accurateness, so this last check will catch any lingering bugs. 
