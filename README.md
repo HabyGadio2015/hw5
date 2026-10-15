@@ -96,7 +96,8 @@ cp .env.example .env        # then put your PORTKEY_API_KEY in .env
 `data/campus_customs.db` is the untouched original. Everything the app does
 reads and writes `data/campus_customs_new.db`. As committed, the working copy
 holds the state *after* the Problem 9 run: checking at $2,560, invoice #501
-paid. To start clean:
+paid. Ticket 103's notes also carry one extra customer draft from a
+post-submission verification rerun; cash and payments are unchanged. To start clean:
 
 ```bash
 cp data/campus_customs.db data/campus_customs_new.db

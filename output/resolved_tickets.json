@@ -46,6 +46,7 @@
       "facilities": "Not involved.",
       "customer_service": "Saved a draft (save_draft) to Yale AI Club asking for their target unit price, instead of offering a discount itself. Nothing was sent."
     },
-    "human_approvals": []
+    "human_approvals": [],
+    "verification_rerun": "After submission, Haby asked for ticket 103 to be rerun on the Problem 9 end state (audit entries 38-42). The outcome was the same: Not Resolved; $22 cost / $58 list with a floor strictly above $22; 8 of 20 in stock (12 short, 5-day lead time); vendor has no open invoice; another draft asking for the club's target price; no payment, no cash change."
   }
 ]
